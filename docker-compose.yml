@@ -1,0 +1,33 @@
+version: '3'
+services:
+  publisher:
+    image: acim/go-reflex:1.23.4
+    environment:
+      - RACE_DETECTOR=1
+      - GOPROXY=https://goproxy.cn,direct
+    ports:
+      - 5000:5000
+    volumes:
+      - ./publisher:/app
+    working_dir: /app
+    env_file:
+      - .env
+    depends_on:
+      - nats
+
+  subscriber:
+    image: acim/go-reflex:1.23.4
+    environment:
+      - RACE_DETECTOR=1
+      - GOPROXY=https://goproxy.cn,direct
+    volumes:
+      - ./subscriber:/app
+    working_dir: /app
+    env_file:
+      - .env
+    depends_on:
+      - nats
+
+  nats:
+    image: nats-streaming:0.16.2
+    restart: on-failure
